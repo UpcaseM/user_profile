@@ -70,7 +70,7 @@ orders_table_create = ("""
 
 CREATE TABLE orders(
     line_id SERIAL PRIMARY KEY,
-    po_number VARCHAR NOT NULL,
+    so_number VARCHAR NOT NULL,
     product_id VARCHAR NOT NULL,
     user_id VARCHAR NOT NULL,
     so_created_time TIMESTAMP,
@@ -191,7 +191,7 @@ WHERE ROW_NUM = 1;
 # Insert orders
 orders_table_insert = ("""
 
-INSERT INTO orders(po_number,
+INSERT INTO orders(so_number,
                    product_id,
                    user_id,
                    so_created_time,
@@ -199,7 +199,7 @@ INSERT INTO orders(po_number,
                    price,
                    qty)
 SELECT
-    po_number,
+    so_number,
     product_id,
     user_id,
     so_created_time,
@@ -208,14 +208,14 @@ SELECT
     qty
 FROM (
         SELECT
-            user_session as po_number,
+            user_session as so_number,
             product_id,
             user_id,
             price,
             count(*) as qty
         FROM events
         WHERE event_type = 'purchase'
-        GROUP BY po_number, product_id, user_id, price
+        GROUP BY so_number, product_id, user_id, price
 ) tbo
 INNER JOIN (
         SELECT
@@ -232,7 +232,7 @@ INNER JOIN (
             WHERE event_type = 'purchase'
         ) T1
         WHERE ROW_NUM = 1
-) tbt ON tbo.po_number = tbt.user_session;
+) tbt ON tbo.so_number = tbt.user_session;
 """)
 
 # Insert time
